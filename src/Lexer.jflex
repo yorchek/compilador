@@ -30,30 +30,22 @@ Espacio = {FinDeLinea}|[ \t\f]
 Identificador = [:jletter:][:jletterdigit:]*
 Numero = 0 | [1-9][0-9]*
 
-ComentarioInicio = \/\*\* | {Espacio}*\*
+ComentarioInicio = \/\*\* | \*
 ComentarioFin = {FinDeLinea} | \*\/
 ComentarioDeLinea = \/\/.*{FinDeLinea}
 Comentario = {ComentarioInicio}([^(\*\/)])*{ComentarioFin} | {ComentarioDeLinea}
 
-LiteralNulo = nulo
-LiteralCadena = \"([^\"])*\"
 LiteralBooleana = verdadero | falso
-LiteralEntera = {Numero}
-Literal = {LiteralEntera} | {LiteralBooleana} | {LiteralCadena} | {LiteralNulo}
 
-OperadorUnario = no({LiteralBooleana}|{Identificador})| -{Numero}
-OperadorOtro = (> | < | == | >= | <= | \+)
-OperadorLogico = {Espacio}(y | o){Espacio}
-OperadorBinario = {Espacio}(\+ | - | \* | %){Espacio}
-OperadorAsignacion = {Espacio}?={Espacio}?
-Operador = {OperadorBinario} | {OperadorUnario} | {OperadorAsignacion} | {OperadorLogico} | {OperadorOtro}
+OperadorUnario = no
+OperadorBinario = \+ | - | \* | % | = | y | o | > | < | == | >= | <=
+Operadores = {OperadorUnario} | {OperadorBinario}
 
 %%
 
 <YYINITIAL> {
   {Espacio}                 {}  
   {Comentario}              {}
-  {Numero}                  {return new Symbol(sym.NUMERO, yyline, yycolumn);}
   "programa"                {return new Symbol(sym.PROGRAMA, yyline, yycolumn);}
   "mientras"                {return new Symbol(sym.MIENTRAS, yyline, yycolumn);}
   "{"			                  {return new Symbol(sym.LLAVE_IZQ, yyline, yycolumn);}
@@ -67,12 +59,15 @@ Operador = {OperadorBinario} | {OperadorUnario} | {OperadorAsignacion} | {Operad
   "entonces"                {return new Symbol(sym.ENTONCES, yyline, yycolumn);}
   "logico"                  {return new Symbol(sym.LOGICO, yyline, yycolumn);}
   "entero"                  {return new Symbol(sym.ENTERO, yyline, yycolumn);}
+  "cadena"                  {return new Symbol(sym.CADENA, yyline, yycolumn);}
   "lee"                     {return new Symbol(sym.OP_LECTURA, yyline, yycolumn);}
   ";"			                  {return new Symbol(sym.MARCADOR_FIN_SENTENCIA, yyline, yycolumn);}
   \"                        {cadena.setLength(0);yybegin(CADENA);}
-  {Operador}                {return new Symbol(sym.OPERADOR, yyline, yycolumn);}
+  "nulo"                    {return new Symbol(sym.OPERADOR, yyline, yycolumn);}
+  {Numero}                  { return new Symbol(sym.LITERAL_ENTERA, yyline, yycolumn, new Integer(yytext())); }
+  {Operadores}              {return new Symbol(sym.OPERADOR, yyline, yycolumn);}
+  {LiteralBooleana}         {return new Symbol(sym.LITERAL_BOOLEANA, yyline, yycolumn, yytext().toString());}
   {Identificador}           {return new Symbol(sym.ID, yyline, yycolumn);}
-  {Literal}                 {return new Symbol(sym.LITERAL, yyline, yycolumn);}
 }
 
 <CADENA> {

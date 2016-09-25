@@ -33,7 +33,7 @@ public class Compilador{
 		String fase = args[2];
 		if(fase.equals("alexico"))
 			etapa = 0;
-		else if(fase.equals("asintactico"))
+		else if(fase.equals("as"))
 				etapa = 1;
 		else if(fase.equals( "asemantico"))
 				etapa = 2;
@@ -87,9 +87,9 @@ public class Compilador{
 			System.out.println("\n\n* INICIANDO ANALISIS SINTACTICO:");
 			parser parser=new parser(new Lexer(new InputStreamReader(new FileInputStream(src), "UTF-8")));
 			programa = (AST.Programa)parser.parse().value;
-			ASTPrinterVisitor astpv = new ASTPrinterVisitor();
+			ASTPrinter astprinter = new ASTPrinter();
 			System.out.println("\t\tÁrbol de Sintaxis Abstracta (AST):\n");
-			programa.accept(astpv);
+			astprinter.print(programa);
 				}catch(Exception e){
 					System.out.println(e.getMessage());
 					ERROR = 1;
@@ -107,17 +107,17 @@ public class Compilador{
 				}
 				try{
 			System.out.println("* INICIANDO ANALISIS SEMANTICO:");
-			BuildSymbolTableVisitor bstv =new BuildSymbolTableVisitor();
-			SymbolTable tabla_simbolos = bstv.buildSymbolTable(programa);
-			if(bstv.getNumErr()!=0){
+			SymbolTableBuilder stb =new SymbolTableBuilder();
+			SymbolTable tabla_simbolos = stb.build(programa);
+			if(stb.getNumErr()!=0){
 				ERROR = 1;
 			}
 			System.out.println("* CREANDO TABLA DE SIMBOLOS:");
 			System.out.println("\t\t"+tabla_simbolos);
-			TypeCheckVisitor tcv =new TypeCheckVisitor(tabla_simbolos);
+			TypeChecker tchecker =new TypeChecker(tabla_simbolos);
 			System.out.println("* EJECUTANDO CHEQUEO DE TIPOS:");
-			programa.accept(tcv);
-			if(tcv.getNumErr()>0) ERROR = 1;
+			tchecker.check(programa);
+			if(tchecker.getNumErr()>0) ERROR = 1;
 				}catch(Exception e){
 					ERROR = 1;
 				}
@@ -134,12 +134,10 @@ public class Compilador{
 				}
 				try{
 			System.out.println("* GENERANDO CODIGO");
-			CodeGeneratorVisitor cgv = new CodeGeneratorVisitor(args[0]+"/ensamblador/lib/funciones");
-				programa.accept(cgv); // visitamos el AST para ir generando el código ensamblador
+			CodeGenerator codeg = new CodeGenerator(args[0]+"/ensamblador/lib/funciones");
+			String codigo = codeg.codeFor(programa); 
 					String objeto = fuente.replace(".javanol",".asm");
 					PrintWriter file = new PrintWriter(args[0]+"/ensamblador/"+objeto);
-					String codigo = cgv.getASM();
-					//System.out.println(codigo);
 					file.print(codigo);
 					file.close();
 					

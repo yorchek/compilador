@@ -1,80 +1,51 @@
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 class AST{
 
-	static abstract class Nodo implements Visitable {
-		int linea;
-		public void accept(Visitor v){
-		}
-	}
 
-	static class Programa extends Nodo{
+	static class Programa {
 		BloqueDeSentencias bloqueDeSentencias;
-
+		int linea;
 		Programa (BloqueDeSentencias bloqueDeSentencias, int linea){
 			this.bloqueDeSentencias = bloqueDeSentencias;
 			this.linea = linea;
 		}
-		
-		public void accept(Visitor v){
-			v.visit(this);
-		}
 	}
 
-	static class BloqueDeSentencias extends Nodo{
+	static class BloqueDeSentencias{
 		ArrayList<Sentencia> sentencias; 
+		int linea;
 		BloqueDeSentencias (ArrayList<Sentencia> sentencias, int linea){
 			this.linea = linea;
 			this.sentencias = sentencias;
 		}
-		public void accept(Visitor v){
-			v.visit(this);
-		}
 	}
 
-	static abstract class Sentencia extends Nodo{
-		public void accept(Visitor v){
-			v.visit(this);
-		}
+	static abstract class Sentencia{
 	}
 
 	static abstract class Operacion extends Sentencia{
-		public void accept(Visitor v){
-			v.visit(this);
-		}
 	}
 
-	static abstract class Expresion extends Nodo{
-	public void accept(Visitor v){
-			v.visit(this);
-		}
+	static abstract class Expresion{
 	}
 	
 	static class ExpresionLiteral extends Expresion{
 		Object literal;
-		
+		int linea;
 		ExpresionLiteral(Object literal, int linea){
 			this.literal = literal;
 			this.linea = linea;
 		}
-		public void accept(Visitor v){
-			v.visit(this);
-		}
-
 	}
-
 	
 	static  class OperacionSalida extends Operacion{
 		Expresion exp;
-
+		int linea;
 		OperacionSalida(Expresion exp, int linea){
 			this.exp = exp;
 			this.linea = linea;
-		}
-	public void accept(Visitor v){
-			v.visit(this);
 		}
 
 	}

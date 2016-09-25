@@ -11,6 +11,7 @@ programa{
 		lee N;	
 	]
 
+	// Hola
 	escribe "Los "+N+" primeros términos de la serie de Fibonacci son:"
 
 	escribe 1;

@@ -12,47 +12,52 @@ public interface sym {
   public static final int LLAVE_IZQ = 3;
   public static final int LLAVE_DER = 4;
   public static final int OP_ESCRITURA = 5;
-  public static final int MARCADOR_FIN_SENTENCIA = 6;  
-  public static final int LITERAL_CADENA = 7;  
-  public static final int MIENTRAS = 8;  
-  public static final int PARA = 9;  
-  public static final int DESDE = 10;  
-  public static final int HASTA = 11;  
-  public static final int ENTONCES = 12;
-  public static final int SI = 13;
-  public static final int SI_NO = 14;
-  public static final int ID = 15;
-  public static final int NUMERO = 16;
-  public static final int SIMBOLO = 17;
-  public static final int OP_LECTURA = 18;
-  public static final int ENTERO = 19;
-  public static final int LOGICO = 20;
-  public static final int LITERAL = 21;
+  public static final int MARCADOR_FIN_SENTENCIA = 6;
+  public static final int LITERAL_CADENA = 7;
+  public static final int ID = 8;
+//palabras reservadas
+  public static final int OP_LECTURA = 9;
+  public static final int ENTERO = 10;
+  public static final int MIENTRAS = 11;
+  public static final int PARA = 12;
+  public static final int DESDE = 13;
+  public static final int HASTA = 14;
+  public static final int SI = 15;
+  public static final int SI_NO = 16;
+  public static final int ENTONCES = 17;
+  public static final int LOGICO = 18;
+  public static final int CADENA = 19;
+  public static final int LITERAL_ENTERA = 20;
+//Los demas
+  public static final int LITERAL_NULA = 21;
   public static final int OPERADOR = 22;
+  public static final int LITERAL_BOOLEANA = 23;
+
   public static final String[] terminalNames = new String[] {
-  "EOF",
-  "error",
-  "PROGRAMA",
-  "LLAVE_IZQ",
-  "LLAVE_DER",
-  "OP_ESCRITURA",
-  "MARCADOR_FIN_SENTENCIA",
-  "LITERAL_CADENA",
-  "MIENTRAS",
-  "PARA",
-  "DESDE",
-  "HASTA",
-  "ENTONCES",
-  "SI",
-  "SI NO",
-  "IDENTIFICADOR",
-  "NUMERO",
-  "SIMBOLO",
-  "OP_LECTURA",
-  "ENTERO",
-  "LOGICO",
-  "LITERAL",
-  "OPERADOR"
+  "EOF", // 0
+  "error", // 1
+  "PROGRAMA", // 2
+  "LLAVE_IZQ", // 3
+  "LLAVE_DER", // 4
+  "OP_ESCRITURA", // 5
+  "MARCADOR_FIN_SENTENCIA", // 6
+  "LITERAL_CADENA", // 7
+  "ID", // 8
+  "OP_LECTURA", // 9
+  "ENTERO", // 10
+  "MIENTRAS", // 11
+  "PARA", // 12
+  "DESDE", // 13
+  "HASTA", // 14
+  "SI", // 15
+  "SI_NO", // 16
+  "ENTONCES", // 17
+  "LOGICO", // 18
+  "CADENA", // 19
+  "LITERAL_ENTERA", // 20
+  "LITERAL_NULA", // 21
+  "OPERADOR", // 22
+  "LITERAL_BOOLEANA" // 23
   };
 }
-
+  

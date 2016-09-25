@@ -1,3 +1,5 @@
 programa{
-	escribe "hola mundo!";
+	escribe "hola";
+	escribe 2;
+	escribe verdadero;
 }

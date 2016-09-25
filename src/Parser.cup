@@ -31,6 +31,8 @@ parser code {:
 
 terminal String PROGRAMA, LLAVE_IZQ, LLAVE_DER, OP_ESCRITURA, MARCADOR_FIN_SENTENCIA,LITERAL_CADENA;
 
+non terminal AST.ExpresionReferencia expresionReferencia;
+
 non terminal AST.Programa programa;
 non terminal AST.BloqueDeSentencias bloqueDeSentencias;
 non terminal AST.Sentencia sentencia;
@@ -39,6 +41,7 @@ non terminal AST.Literal literal;
 non terminal AST.OperacionSalida operacionSalida;
 non terminal AST.Expresion expresion;
 non terminal AST.ExpresionLiteral expresionLiteral;
+
 
 start with programa;
 

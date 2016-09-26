@@ -39,6 +39,7 @@ public class ASTPrinter{
 	
 	private void print(AST.Operacion o){
 		 if (o instanceof AST.OperacionSalida) this.print((AST.OperacionSalida)o);
+		 if (o instanceof AST.OperacionEntrada) this.print((AST.OperacionEntrada)o);
 	}
 	
 	private void print(AST.OperacionSalida os){
@@ -51,11 +52,27 @@ public class ASTPrinter{
 
 	private void print(AST.Expresion e){
 		if (e instanceof AST.ExpresionLiteral) this.print((AST.ExpresionLiteral)e);
-		nivel--;
+		if (e instanceof AST.ExpresionReferencia) this.print((AST.ExpresionReferencia)e);
 	}
 
 	private void print(AST.ExpresionLiteral e){
 		String tabs = tabs();
 		System.out.println(tabs+"\""+e.literal+"\"");
+		nivel--;
+	}
+
+	//A partir de aqui es lo que agregue
+	private void print(AST.ExpresionReferencia e){
+		String tabs = tabs();
+		System.out.println(tabs+"Id "+e.id+"");
+		nivel--;
+	}
+
+	private void print(AST.OperacionEntrada os){
+		String tabs = tabs();
+		System.out.println(tabs+"[OperacionEntrada: ");
+		nivel++;
+		this.print(os.id);
+		System.out.println("\n"+tabs+"]");
 	}
 }

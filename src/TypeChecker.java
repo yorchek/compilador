@@ -27,23 +27,25 @@ private int numErr;
 		
 	private void check(AST.Operacion o){
 		if (o instanceof AST.OperacionSalida) this.check((AST.OperacionSalida)o);
+		if (o instanceof AST.OperacionEntrada) this.check((AST.OperacionEntrada)o);
 	}
 	
 	private void check(AST.OperacionSalida os){}
+	private void check(AST.OperacionEntrada os){}
 
 	
 	private String getTipo(AST.Expresion n){
 		if(n instanceof AST.ExpresionLiteral){ 
-			System.out.println(n);
 			AST.ExpresionLiteral el = (AST.ExpresionLiteral)n;
 			
 			Object literal = el.literal;
 			if(literal instanceof String) return "cadena";
 			else if (literal instanceof Boolean) return "logico";
-			else if (literal instanceof Integer) return "entero";
+			else if (literal instanceof Integer){System.out.println("Si es un entero"); return "entero";}
 			return "indefinido";
 			
 		}
+		if(n instanceof AST.ExpresionReferencia) {return "identificador";}
 		return "indefinido";
 	}
 	

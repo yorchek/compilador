@@ -39,6 +39,17 @@ class AST{
 			this.linea = linea;
 		}
 	}
+
+	//agregue los identificadores
+	static class ExpresionReferencia extends Expresion{
+		Object id;
+		int linea;
+		ExpresionReferencia(Object id, int linea){
+			System.out.println("si es un id");
+			this.id = id;
+			this.linea = linea;
+		}
+	}
 	
 	static  class OperacionSalida extends Operacion{
 		Expresion exp;
@@ -47,7 +58,16 @@ class AST{
 			this.exp = exp;
 			this.linea = linea;
 		}
+	}
 
+	static  class OperacionEntrada extends Operacion{
+		ExpresionReferencia id;
+		int linea;
+		OperacionEntrada(ExpresionReferencia id, int linea){
+			System.out.println("Si reconoce la clase");
+			this.id = id;
+			this.linea = linea;
+		}
 	}
 
 }

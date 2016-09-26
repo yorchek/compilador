@@ -29,9 +29,8 @@ parser code {:
     }
 :};
 
-terminal String PROGRAMA, LLAVE_IZQ, LLAVE_DER, OP_ESCRITURA, MARCADOR_FIN_SENTENCIA,LITERAL_CADENA;
-
-non terminal AST.ExpresionReferencia expresionReferencia;
+terminal String PROGRAMA, LLAVE_IZQ, LLAVE_DER, OP_ESCRITURA, MARCADOR_FIN_SENTENCIA, LITERAL_CADENA, ID, OP_LECTURA;
+terminal Integer LITERAL_ENTERA;
 
 non terminal AST.Programa programa;
 non terminal AST.BloqueDeSentencias bloqueDeSentencias;
@@ -42,15 +41,22 @@ non terminal AST.OperacionSalida operacionSalida;
 non terminal AST.Expresion expresion;
 non terminal AST.ExpresionLiteral expresionLiteral;
 
+non terminal AST.OperacionEntrada operacionEntrada;
+non terminal AST.ExpresionReferencia expresionReferencia;
+
 
 start with programa;
 
 programa ::=    PROGRAMA:p LLAVE_IZQ bloqueDeSentencias:b LLAVE_DER {:RESULT= new AST.Programa(b,pleft);:};
 
 bloqueDeSentencias::= sentencia:s  {:ArrayList bloque = new ArrayList();bloque.add(s);RESULT= new AST.BloqueDeSentencias(bloque, sleft);:} 
-					| sentencia:s  bloqueDeSentencias:bloque {:bloque.sentencias.add(s); RESULT= bloque;:};
+                    | sentencia:s  bloqueDeSentencias:bloque {:bloque.sentencias.add(s); RESULT= bloque;:};
 sentencia ::= operacion:op  MARCADOR_FIN_SENTENCIA{:RESULT= op;:};
-operacion ::= operacionSalida:os {:RESULT=os;:};
+operacion ::= operacionSalida:os {:RESULT=os;:} | operacionEntrada:oe {:RESULT=oe;:};
 operacionSalida  ::= OP_ESCRITURA:oe expresion:expresion {:RESULT= new AST.OperacionSalida(expresion,oeleft);:};
-expresion ::= expresionLiteral:el {:RESULT= el;:};
-expresionLiteral ::= LITERAL_CADENA:lc {: RESULT = new AST.ExpresionLiteral(lc,lcleft);:};
+expresion ::= expresionLiteral:el {:RESULT= el;:} | expresionReferencia:er {:RESULT= er;:};
+expresionLiteral ::= LITERAL_CADENA:lc {: RESULT = new AST.ExpresionLiteral(lc,lcleft);:}
+                   | LITERAL_ENTERA:le {: RESULT = new AST.ExpresionLiteral(new Integer(le),leleft);:};
+
+operacionEntrada  ::= OP_LECTURA:o expresionReferencia:id {:System.out.println("Si reconoce op_lectura");RESULT= new AST.OperacionEntrada(id,oleft);:};
+expresionReferencia ::= ID:id {: System.out.println("debe ser un id");RESULT = new AST.ExpresionReferencia(id,idleft);:};

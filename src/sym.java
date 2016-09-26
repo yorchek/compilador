@@ -28,7 +28,7 @@ public interface sym {
   public static final int LOGICO = 18;
   public static final int CADENA = 19;
   public static final int LITERAL_ENTERA = 20;
-//Los demas
+//Los dema
   public static final int LITERAL_NULA = 21;
   public static final int OPERADOR = 22;
   public static final int LITERAL_BOOLEANA = 23;
@@ -60,4 +60,3 @@ public interface sym {
   "LITERAL_BOOLEANA" // 23
   };
 }
-  

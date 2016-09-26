@@ -64,10 +64,10 @@ Operadores = {OperadorUnario} | {OperadorBinario}
   ";"			                  {return new Symbol(sym.MARCADOR_FIN_SENTENCIA, yyline, yycolumn);}
   \"                        {cadena.setLength(0);yybegin(CADENA);}
   "nulo"                    {return new Symbol(sym.OPERADOR, yyline, yycolumn);}
-  {Numero}                  { return new Symbol(sym.LITERAL_ENTERA, yyline, yycolumn, new Integer(yytext())); }
+  {Numero}                  {return new Symbol(sym.LITERAL_ENTERA, yyline, yycolumn, new Integer(yytext()));}
   {Operadores}              {return new Symbol(sym.OPERADOR, yyline, yycolumn);}
   {LiteralBooleana}         {return new Symbol(sym.LITERAL_BOOLEANA, yyline, yycolumn, yytext().toString());}
-  {Identificador}           {return new Symbol(sym.ID, yyline, yycolumn);}
+  {Identificador}           {return new Symbol(sym.ID, yyline, yycolumn, yytext().toString());}
 }
 
 <CADENA> {

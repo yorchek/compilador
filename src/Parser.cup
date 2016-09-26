@@ -29,8 +29,7 @@ parser code {:
     }
 :};
 
-terminal String PROGRAMA, LLAVE_IZQ, LLAVE_DER, OP_ESCRITURA, MARCADOR_FIN_SENTENCIA, LITERAL_CADENA, ID, OP_LECTURA;
-terminal Integer LITERAL_ENTERA;
+terminal String PROGRAMA, LLAVE_IZQ, LLAVE_DER, OP_ESCRITURA, MARCADOR_FIN_SENTENCIA, LITERAL_CADENA, ID, OP_LECTURA, ENTERO, LITERAL_ENTERA;
 
 non terminal AST.Programa programa;
 non terminal AST.BloqueDeSentencias bloqueDeSentencias;
@@ -43,6 +42,8 @@ non terminal AST.ExpresionLiteral expresionLiteral;
 
 non terminal AST.OperacionEntrada operacionEntrada;
 non terminal AST.ExpresionReferencia expresionReferencia;
+non terminal AST.DeclaracionSimple declaracion;
+non terminal declaracionTipo;
 
 
 start with programa;
@@ -51,12 +52,15 @@ programa ::=    PROGRAMA:p LLAVE_IZQ bloqueDeSentencias:b LLAVE_DER {:RESULT= ne
 
 bloqueDeSentencias::= sentencia:s  {:ArrayList bloque = new ArrayList();bloque.add(s);RESULT= new AST.BloqueDeSentencias(bloque, sleft);:} 
                     | sentencia:s  bloqueDeSentencias:bloque {:bloque.sentencias.add(s); RESULT= bloque;:};
-sentencia ::= operacion:op  MARCADOR_FIN_SENTENCIA{:RESULT= op;:};
+sentencia ::= operacion:op  MARCADOR_FIN_SENTENCIA{:RESULT= op;:}
+            | declaracion:d  MARCADOR_FIN_SENTENCIA{:RESULT= d;:};
 operacion ::= operacionSalida:os {:RESULT=os;:} | operacionEntrada:oe {:RESULT=oe;:};
 operacionSalida  ::= OP_ESCRITURA:oe expresion:expresion {:RESULT= new AST.OperacionSalida(expresion,oeleft);:};
 expresion ::= expresionLiteral:el {:RESULT= el;:} | expresionReferencia:er {:RESULT= er;:};
 expresionLiteral ::= LITERAL_CADENA:lc {: RESULT = new AST.ExpresionLiteral(lc,lcleft);:}
                    | LITERAL_ENTERA:le {: RESULT = new AST.ExpresionLiteral(new Integer(le),leleft);:};
 
-operacionEntrada  ::= OP_LECTURA:o expresionReferencia:id {:System.out.println("Si reconoce op_lectura");RESULT= new AST.OperacionEntrada(id,oleft);:};
-expresionReferencia ::= ID:id {: System.out.println("debe ser un id");RESULT = new AST.ExpresionReferencia(id,idleft);:};
+operacionEntrada  ::= OP_LECTURA:o expresionReferencia:id {:RESULT= new AST.OperacionEntrada(id,oleft);:};
+expresionReferencia ::= ID:id {: RESULT = new AST.ExpresionReferencia(id,idleft);:};
+declaracion ::= declaracionTipo:dt expresionReferencia:id {:AST.DeclaracionTipo nt = (AST.DeclaracionTipo)dt; RESULT= new AST.DeclaracionSimple(nt.tipo,id,nt.linea);:};
+declaracionTipo ::=  ENTERO:e {:RESULT= new AST.DeclaracionTipo("Entero",eleft);:};

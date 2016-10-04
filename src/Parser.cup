@@ -29,22 +29,35 @@ parser code {:
     }
 :};
 
-terminal String PROGRAMA, LLAVE_IZQ, LLAVE_DER, OP_ESCRITURA, MARCADOR_FIN_SENTENCIA, LITERAL_CADENA, ID, OP_LECTURA, ENTERO, LITERAL_ENTERA;
+terminal String PROGRAMA, LLAVE_IZQ, LLAVE_DER, OP_ESCRITURA, MARCADOR_FIN_SENTENCIA, LITERAL_CADENA, ID, OP_LECTURA, ENTERO, LITERAL_ENTERA, LITERAL_BOOLEANA, OPERADOR_COMPARACION, OPERADOR_BINARIO, OPERADOR_LOGICO;
+terminal ASIGNACION, MIENTRAS, PARA, DESDE, HASTA, SI, SI_NO, ENTONCES, LOGICO, CADENA, LITERAL_NULA, OPERADOR_UNARIO, PAREN_IZQ, PAREN_DER;
 
 non terminal AST.Programa programa;
 non terminal AST.BloqueDeSentencias bloqueDeSentencias;
 non terminal AST.Sentencia sentencia;
 non terminal AST.Operacion operacion;
-non terminal AST.Literal literal;
 non terminal AST.OperacionSalida operacionSalida;
 non terminal AST.Expresion expresion;
 non terminal AST.ExpresionLiteral expresionLiteral;
 
 non terminal AST.OperacionEntrada operacionEntrada;
 non terminal AST.ExpresionReferencia expresionReferencia;
-non terminal AST.DeclaracionSimple declaracion;
-non terminal declaracionTipo;
+non terminal AST.Declaracion declaracion;
+non terminal AST.DeclaracionSimple declaracionSimple;
+non terminal AST.DeclaracionCompuesta declaracionCompuesta;
+non terminal String declaracionTipo;
 
+non terminal AST.Repeticion repeticion;
+non terminal AST.ExpresionBinaria expresionBinaria, expresionComparacion, expresionCondicion;
+non terminal AST.Decision decision;
+non terminal AST.Asignacion asignacion;
+non terminal AST.Iteracion iteracion;
+
+non terminal AST.ExpresionUnaria expresionUnaria;
+
+precedence left OPERADOR_LOGICO;
+precedence left OPERADOR_COMPARACION;
+precedence left OPERADOR_BINARIO;
 
 start with programa;
 
@@ -53,14 +66,47 @@ programa ::=    PROGRAMA:p LLAVE_IZQ bloqueDeSentencias:b LLAVE_DER {:RESULT= ne
 bloqueDeSentencias::= sentencia:s  {:ArrayList bloque = new ArrayList();bloque.add(s);RESULT= new AST.BloqueDeSentencias(bloque, sleft);:} 
                     | sentencia:s  bloqueDeSentencias:bloque {:bloque.sentencias.add(s); RESULT= bloque;:};
 sentencia ::= operacion:op  MARCADOR_FIN_SENTENCIA{:RESULT= op;:}
-            | declaracion:d  MARCADOR_FIN_SENTENCIA{:RESULT= d;:};
-operacion ::= operacionSalida:os {:RESULT=os;:} | operacionEntrada:oe {:RESULT=oe;:};
+            | declaracion:d  MARCADOR_FIN_SENTENCIA{:RESULT= d;:}
+            | repeticion:r{:RESULT= r;:} 
+            | decision:d{:RESULT= d;:} 
+            | iteracion:i{:RESULT= i;:};
+operacion ::= operacionSalida:os {:RESULT=os;:} 
+            | asignacion:a {:RESULT= a;:} 
+            | operacionEntrada:oe {:RESULT=oe;:};
 operacionSalida  ::= OP_ESCRITURA:oe expresion:expresion {:RESULT= new AST.OperacionSalida(expresion,oeleft);:};
-expresion ::= expresionLiteral:el {:RESULT= el;:} | expresionReferencia:er {:RESULT= er;:};
+expresion ::= expresionLiteral:el {:RESULT= el;:} 
+            | expresionReferencia:er {:RESULT= er;:}
+            | expresionBinaria:eb {:RESULT= eb;:}
+            | expresionUnaria:eb {:RESULT= eb;:};
 expresionLiteral ::= LITERAL_CADENA:lc {: RESULT = new AST.ExpresionLiteral(lc,lcleft);:}
+                   | LITERAL_BOOLEANA:lb {: RESULT = new AST.ExpresionLiteral(AST.ExpresionLiteral.aBooleano(lb),lbleft);:}
                    | LITERAL_ENTERA:le {: RESULT = new AST.ExpresionLiteral(new Integer(le),leleft);:};
 
 operacionEntrada  ::= OP_LECTURA:o expresionReferencia:id {:RESULT= new AST.OperacionEntrada(id,oleft);:};
 expresionReferencia ::= ID:id {: RESULT = new AST.ExpresionReferencia(id,idleft);:};
-declaracion ::= declaracionTipo:dt expresionReferencia:id {:AST.DeclaracionTipo nt = (AST.DeclaracionTipo)dt; RESULT= new AST.DeclaracionSimple(nt.tipo,id,nt.linea);:};
-declaracionTipo ::=  ENTERO:e {:RESULT= new AST.DeclaracionTipo("Entero",eleft);:};
+declaracion ::= declaracionSimple:d {:RESULT = d;:}
+              | declaracionCompuesta:dc {:RESULT= dc;:};
+declaracionSimple ::= declaracionTipo:dt expresionReferencia:id {:RESULT= new AST.DeclaracionSimple(dt,id,id.linea);:};
+declaracionCompuesta ::= declaracionTipo:dt expresionReferencia:id ASIGNACION expresion:exp {:RESULT= new AST.DeclaracionCompuesta(dt,id,exp,id.linea);:};
+declaracionTipo ::=  ENTERO:e {:RESULT= "Entero";:}
+                   | CADENA:c {:RESULT= "Cadena";:}
+                   | LOGICO:l {:RESULT= "Logico";:};
+
+asignacion ::= expresionReferencia:id ASIGNACION expresion:exp {:RESULT= new AST.Asignacion(id, exp, id.linea);:};
+
+expresionComparacion ::= expresion:ei OPERADOR_COMPARACION:oc expresion:ed {:RESULT= new AST.ExpresionBinaria(ei,oc, ed, ocleft);:};
+expresionCondicion ::= expresion:eci OPERADOR_LOGICO:ol expresion:ecd {:RESULT= new AST.ExpresionBinaria(eci, ol, ecd, olleft);:};
+repeticion ::= MIENTRAS:m expresion:ec LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER{:RESULT= new AST.Repeticion(ec, bloque, mleft);:};
+
+expresionBinaria ::= expresionComparacion:ec {:RESULT= ec;:} 
+                   | expresionCondicion:ec {:RESULT= ec;:} 
+                   | expresion:expi OPERADOR_BINARIO:ob expresion:expd {:RESULT= new AST.ExpresionBinaria(expi, ob, expd, obleft);:};
+
+decision ::= SI:s expresionComparacion:ec ENTONCES LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER{:RESULT= new AST.Decision(ec, bloque, sleft);:} 
+           | SI:s expresionComparacion:ec ENTONCES LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER SI_NO LLAVE_IZQ bloqueDeSentencias:bloquesn LLAVE_DER{:RESULT= new AST.Decision(ec, bloque, bloquesn, sleft);:};
+
+iteracion ::= PARA expresionReferencia:id DESDE expresionLiteral:el HASTA expresionLiteral:exp LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER{:RESULT= new AST.Iteracion(id, el, exp, bloque, id.linea);:}
+            | PARA expresionReferencia:id DESDE expresionLiteral:el HASTA expresionReferencia:exp LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER{:RESULT= new AST.Iteracion(id, el, exp, bloque, id.linea);:};
+
+expresionUnaria ::= OPERADOR_UNARIO:ou expresion:exp {:RESULT= new AST.ExpresionUnaria(exp, ouleft);:}
+                  | OPERADOR_UNARIO:ou PAREN_IZQ expresion:exp PAREN_DER {:RESULT= new AST.ExpresionUnaria(exp, ouleft);:};

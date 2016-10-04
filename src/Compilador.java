@@ -33,7 +33,7 @@ public class Compilador{
 		String fase = args[2];
 		if(fase.equals("alexico"))
 			etapa = 0;
-		else if(fase.equals("as"))
+		else if(fase.equals("asintactico"))
 				etapa = 1;
 		else if(fase.equals( "asemantico"))
 				etapa = 2;

@@ -37,9 +37,9 @@ Comentario = {ComentarioInicio}([^(\*\/)])*{ComentarioFin} | {ComentarioDeLinea}
 
 LiteralBooleana = verdadero | falso
 
-OperadorUnario = no
-OperadorBinario = \+ | - | \* | % | = | y | o | > | < | == | >= | <=
-Operadores = {OperadorUnario} | {OperadorBinario}
+OperadorBinario = \+ | - | \* | % 
+OperadorComparacion = > | < | == | >= | <=
+OperadorLogico = y | o 
 
 %%
 
@@ -63,9 +63,15 @@ Operadores = {OperadorUnario} | {OperadorBinario}
   "lee"                     {return new Symbol(sym.OP_LECTURA, yyline, yycolumn);}
   ";"			                  {return new Symbol(sym.MARCADOR_FIN_SENTENCIA, yyline, yycolumn);}
   \"                        {cadena.setLength(0);yybegin(CADENA);}
-  "nulo"                    {return new Symbol(sym.OPERADOR, yyline, yycolumn);}
-  {Numero}                  {return new Symbol(sym.LITERAL_ENTERA, yyline, yycolumn, new Integer(yytext()));}
-  {Operadores}              {return new Symbol(sym.OPERADOR, yyline, yycolumn);}
+  "("                       {return new Symbol(sym.PAREN_IZQ, yyline, yycolumn);}
+  ")"                       {return new Symbol(sym.PAREN_DER, yyline, yycolumn);}
+  "nulo"                    {return new Symbol(sym.LITERAL_NULA, yyline, yycolumn);}
+  {Numero}                  {return new Symbol(sym.LITERAL_ENTERA, yyline, yycolumn, yytext().toString());}
+  "no"                      {return new Symbol(sym.OPERADOR_UNARIO, yyline, yycolumn);}
+  {OperadorBinario}         {return new Symbol(sym.OPERADOR_BINARIO, yyline, yycolumn, yytext().toString());}
+  {OperadorComparacion}     {return new Symbol(sym.OPERADOR_COMPARACION, yyline, yycolumn, yytext().toString());}
+  {OperadorLogico}          {return new Symbol(sym.OPERADOR_LOGICO, yyline, yycolumn, yytext().toString());}
+  "="                       {return new Symbol(sym.ASIGNACION, yyline, yycolumn);}
   {LiteralBooleana}         {return new Symbol(sym.LITERAL_BOOLEANA, yyline, yycolumn, yytext().toString());}
   {Identificador}           {return new Symbol(sym.ID, yyline, yycolumn, yytext().toString());}
 }

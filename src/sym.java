@@ -6,58 +6,67 @@
 /** CUP generated interface containing symbol constants. */
 public interface sym {
   /* terminals */
-  public static final int EOF = 0;
-  public static final int error = 1;
-  public static final int PROGRAMA = 2;
-  public static final int LLAVE_IZQ = 3;
-  public static final int LLAVE_DER = 4;
   public static final int OP_ESCRITURA = 5;
-  public static final int MARCADOR_FIN_SENTENCIA = 6;
-  public static final int LITERAL_CADENA = 7;
-  public static final int ID = 8;
-//palabras reservadas
   public static final int OP_LECTURA = 9;
+  public static final int PROGRAMA = 2;
+  public static final int CADENA = 25;
+  public static final int HASTA = 20;
+  public static final int ENTONCES = 23;
+  public static final int LITERAL_BOOLEANA = 12;
+  public static final int OPERADOR_UNARIO = 27;
+  public static final int PARA = 18;
+  public static final int ID = 8;
+  public static final int PAREN_IZQ = 28;
+  public static final int SI_NO = 22;
+  public static final int OPERADOR_COMPARACION = 13;
+  public static final int ASIGNACION = 16;
+  public static final int PAREN_DER = 29;
+  public static final int EOF = 0;
+  public static final int MARCADOR_FIN_SENTENCIA = 6;
+  public static final int SI = 21;
+  public static final int error = 1;
+  public static final int OPERADOR_BINARIO = 14;
+  public static final int LITERAL_NULA = 26;
+  public static final int OPERADOR_LOGICO = 15;
+  public static final int LLAVE_IZQ = 3;
+  public static final int DESDE = 19;
   public static final int ENTERO = 10;
-  public static final int MIENTRAS = 11;
-  public static final int PARA = 12;
-  public static final int DESDE = 13;
-  public static final int HASTA = 14;
-  public static final int SI = 15;
-  public static final int SI_NO = 16;
-  public static final int ENTONCES = 17;
-  public static final int LOGICO = 18;
-  public static final int CADENA = 19;
-  public static final int LITERAL_ENTERA = 20;
-//Los dema
-  public static final int LITERAL_NULA = 21;
-  public static final int OPERADOR = 22;
-  public static final int LITERAL_BOOLEANA = 23;
-
+  public static final int LLAVE_DER = 4;
+  public static final int MIENTRAS = 17;
+  public static final int LITERAL_CADENA = 7;
+  public static final int LOGICO = 24;
+  public static final int LITERAL_ENTERA = 11;
   public static final String[] terminalNames = new String[] {
-  "EOF", // 0
-  "error", // 1
-  "PROGRAMA", // 2
-  "LLAVE_IZQ", // 3
-  "LLAVE_DER", // 4
-  "OP_ESCRITURA", // 5
-  "MARCADOR_FIN_SENTENCIA", // 6
-  "LITERAL_CADENA", // 7
-  "ID", // 8
-  "OP_LECTURA", // 9
-  "ENTERO", // 10
-  "MIENTRAS", // 11
-  "PARA", // 12
-  "DESDE", // 13
-  "HASTA", // 14
-  "SI", // 15
-  "SI_NO", // 16
-  "ENTONCES", // 17
-  "LOGICO", // 18
-  "CADENA", // 19
-  "LITERAL_ENTERA", // 20
-  "LITERAL_NULA", // 21
-  "OPERADOR", // 22
-  "LITERAL_BOOLEANA" // 23
+  "EOF",
+  "error",
+  "PROGRAMA",
+  "LLAVE_IZQ",
+  "LLAVE_DER",
+  "OP_ESCRITURA",
+  "MARCADOR_FIN_SENTENCIA",
+  "LITERAL_CADENA",
+  "ID",
+  "OP_LECTURA",
+  "ENTERO",
+  "LITERAL_ENTERA",
+  "LITERAL_BOOLEANA",
+  "OPERADOR_COMPARACION",
+  "OPERADOR_BINARIO",
+  "OPERADOR_LOGICO",
+  "ASIGNACION",
+  "MIENTRAS",
+  "PARA",
+  "DESDE",
+  "HASTA",
+  "SI",
+  "SI_NO",
+  "ENTONCES",
+  "LOGICO",
+  "CADENA",
+  "LITERAL_NULA",
+  "OPERADOR_UNARIO",
+  "PAREN_IZQ",
+  "PAREN_DER"
   };
 }
-  
+

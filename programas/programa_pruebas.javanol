@@ -1,28 +1,14 @@
-/** Programa que genera los primeros N numeros de la serie de Fibonacci 
-  * N es un número entero especificado por el usuario
-**/
-
 programa{
 	entero N;
-	lee N;
-
-	mientras N<0 o N==0 {
-		escribe "Ingresa un número mayor o igual a 1:";
-		lee N;	
+	entero N;
+	logico v;
+	si N+2 entonces{
+		para i desde 3 hasta N3{
+			N2 = N + "hola";
+		}
+	} si no {
+		mientras N<0 o N+0 {
+			v = 3 < "hola";
+		}
 	}
-
-	escribe "Los "+N+" primeros términos de la serie de Fibonacci son:";
-
-	escribe 1;
-	si N==2 entonces{
-		escribe 1;
-	}
-	si no{
-		entero fibo1=1;
-	}
-	mientras no (N<0 o N==0 ){
-		escribe "Ingresa un número mayor o igual a 1:";
-		lee N;	
-	}
-	escribe "fin del programa";
 }

@@ -88,9 +88,9 @@ declaracion ::= declaracionSimple:d {:RESULT = d;:}
               | declaracionCompuesta:dc {:RESULT= dc;:};
 declaracionSimple ::= declaracionTipo:dt expresionReferencia:id {:RESULT= new AST.DeclaracionSimple(dt,id,id.linea);:};
 declaracionCompuesta ::= declaracionTipo:dt expresionReferencia:id ASIGNACION expresion:exp {:RESULT= new AST.DeclaracionCompuesta(dt,id,exp,id.linea);:};
-declaracionTipo ::=  ENTERO:e {:RESULT= "Entero";:}
-                   | CADENA:c {:RESULT= "Cadena";:}
-                   | LOGICO:l {:RESULT= "Logico";:};
+declaracionTipo ::=  ENTERO:e {:RESULT= "entero";:}
+                   | CADENA:c {:RESULT= "cadena";:}
+                   | LOGICO:l {:RESULT= "logico";:};
 
 asignacion ::= expresionReferencia:id ASIGNACION expresion:exp {:RESULT= new AST.Asignacion(id, exp, id.linea);:};
 
@@ -102,8 +102,8 @@ expresionBinaria ::= expresionComparacion:ec {:RESULT= ec;:}
                    | expresionCondicion:ec {:RESULT= ec;:} 
                    | expresion:expi OPERADOR_BINARIO:ob expresion:expd {:RESULT= new AST.ExpresionBinaria(expi, ob, expd, obleft);:};
 
-decision ::= SI:s expresionComparacion:ec ENTONCES LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER{:RESULT= new AST.Decision(ec, bloque, sleft);:} 
-           | SI:s expresionComparacion:ec ENTONCES LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER SI_NO LLAVE_IZQ bloqueDeSentencias:bloquesn LLAVE_DER{:RESULT= new AST.Decision(ec, bloque, bloquesn, sleft);:};
+decision ::= SI:s expresion:ec ENTONCES LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER{:RESULT= new AST.Decision(ec, bloque, sleft);:} 
+           | SI:s expresion:ec ENTONCES LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER SI_NO LLAVE_IZQ bloqueDeSentencias:bloquesn LLAVE_DER{:RESULT= new AST.Decision(ec, bloque, bloquesn, sleft);:};
 
 iteracion ::= PARA expresionReferencia:id DESDE expresionLiteral:el HASTA expresionLiteral:exp LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER{:RESULT= new AST.Iteracion(id, el, exp, bloque, id.linea);:}
             | PARA expresionReferencia:id DESDE expresionLiteral:el HASTA expresionReferencia:exp LLAVE_IZQ bloqueDeSentencias:bloque LLAVE_DER{:RESULT= new AST.Iteracion(id, el, exp, bloque, id.linea);:};

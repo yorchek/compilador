@@ -12,12 +12,11 @@ programa{
 	}
 
 	escribe "Los "+N+" primeros términos de la serie de Fibonacci son:";
-
-	escribe 1;
+	
 	si N==2 entonces{
 		escribe 1;
 	}
-	si n>2 entonces{
+	si N>2 entonces{
 		entero fibo1=1;
 		entero fibo2=1;
 		entero fibonacci;	

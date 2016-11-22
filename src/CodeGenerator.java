@@ -22,7 +22,7 @@ public class CodeGenerator{
     }
 		
     private String codeFor(AST.BloqueDeSentencias b){
-		String code = "";		
+		String code = "";
 		for(AST.Sentencia sentencia:b.sentencias){
 	    	code+="\n"+this.codeFor(sentencia);
 		}
@@ -40,19 +40,26 @@ public class CodeGenerator{
 
     private String codeFor(AST.Decision d){
     	String codigo = this.codeFor(d.bloque);
-		if(d instanceof AST.Decision) return "\t\t if("+d.cond+"){\n\t\t\t "+codigo+"\n\t\t }";
+    	String cnd="";
+    	if(d.cond instanceof AST.Expresion)
+    		cnd += codeFor((AST.Expresion)d.cond);    	
+		if(d instanceof AST.Decision) return "\t\t if("+cnd+"){"+codigo+"\n\t\t }";
 		return "";
     }
 
     private String codeFor(AST.Iteracion i){
     	String codigo = this.codeFor(i.bloque);
+    	String cnd = "";    	
 		if(i instanceof AST.Iteracion) return "\t\t for("+i.id+";"+i.el+";"+i.cond+ "){"+codigo+"\n}";
 		return "";
     }
 
     private String codeFor(AST.Repeticion r){
     	String codigo = this.codeFor(r.bloque);
-		if(r instanceof AST.Repeticion) return "\t\t while("+r.cond+"){\n \t\t\t"+codigo+"\n\t\t }";
+    	String cnd = "";    	    
+    	if(r.cond instanceof AST.Expresion)
+    		cnd += codeFor((AST.Expresion)r.cond);
+		if(r instanceof AST.Repeticion) return "\t\t while("+cnd+"){"+codigo+"\n\t\t }";
 		return "";
     }
     
@@ -70,9 +77,12 @@ public class CodeGenerator{
     }
 
     private String codeFor(AST.DeclaracionCompuesta dc){
-		if(dc.tipo.equals("entero")) return "\t\t int "+dc.id.id+"="+dc.exp+";";
-		else if(dc.tipo.equals("cadena")) return "\t\t String "+dc.id.id+"="+dc.exp+";";
-		else if(dc.tipo.equals("logico")) return "\t\t boolean "+dc.id.id+"="+dc.exp+";";
+    	String d= "";
+    	if(dc.exp instanceof AST.Expresion)
+    		d+=((AST.Expresion)dc.exp);
+		if(dc.tipo.equals("entero")) return "\t\t int "+dc.id.id+"="+d+";";
+		else if(dc.tipo.equals("cadena")) return "\t\t String "+dc.id.id+"="+d+";";
+		else if(dc.tipo.equals("logico")) return "\t\t boolean "+dc.id.id+"="+d+";";
 		return "";    			
     }
 
@@ -84,8 +94,16 @@ public class CodeGenerator{
 		return "";
     }
 
-    private String codeFor(AST.ExpresionBinaria eb){	
-		return ""+eb.expi+""+eb.op+""+eb.expd;
+    private String codeFor(AST.ExpresionBinaria eb){
+    	String i = "";
+    	String o = "";
+    	String d = "";
+    	if(eb.expi instanceof AST.Expresion) i+=codeFor((AST.Expresion)eb.expi);    	
+    	if(eb.expd instanceof AST.Expresion) d+=codeFor((AST.Expresion)eb.expd);  	
+    	if(eb.op.equals("o")) o+="||";
+    	else if(eb.op.equals("y")) o+="&&";
+    	else o=eb.op;
+		return ""+i+""+o+""+d;
     }
 
     private String codeFor(AST.ExpresionUnaria eu){	
@@ -111,7 +129,10 @@ public class CodeGenerator{
     }
 
     private String codeFor(AST.Asignacion a){
-		return ""+a.id.id+ "="+a.exp+";";
+    	String d= "";
+    	if(a.exp instanceof AST.Expresion)
+    		d+=((AST.Expresion)a.exp);
+		return ""+a.id.id+ "="+d+";";
     }				
 
     private String codeFor(AST.OperacionEntrada oe){

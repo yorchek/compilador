@@ -3,12 +3,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
+//import java.util.ArrayList;
 
 public class CodeGenerator{
 
     String nombreClase;
     SymbolTable table;
+    //ArrayList a = new ArrayList();
 	
     public CodeGenerator(String nombreClase, SymbolTable table){
 		this.nombreClase = nombreClase;
@@ -18,7 +19,7 @@ public class CodeGenerator{
     public String codeFor(AST.Programa p){
 		String codigo = this.codeFor(p.bloqueDeSentencias);
 		String imp = "import java.util.Scanner;\n";
-		return imp+"public class "+nombreClase+"{\n\t public static void main(String[] args){"+codigo+"\n\t}\n}";
+		return imp+"public class "+nombreClase+"{\n\tpublic static void main(String[] args){\n \t\t Scanner sc = new Scanner(System.in)"+codigo+"\n\t}\n}";
     }
 		
     private String codeFor(AST.BloqueDeSentencias b){
@@ -49,8 +50,13 @@ public class CodeGenerator{
 
     private String codeFor(AST.Iteracion i){
     	String codigo = this.codeFor(i.bloque);
-    	String cnd = "";    	
-		if(i instanceof AST.Iteracion) return "\t\t for("+i.id+";"+i.el+";"+i.cond+ "){"+codigo+"\n\t\t }";
+    	String r = "";
+    	String cnd = "";
+    	if(i.el instanceof AST.Expresion)
+    		r += codeFor((AST.Expresion)i.el);
+    	if(i.cond instanceof AST.Expresion)
+    		cnd += codeFor((AST.Expresion)i.cond);
+		if(i instanceof AST.Iteracion) return "\t\t for("+i.id.id+"="+cnd+";"+i.id.id+"=="+cnd+";"+i.id.id+"++){"+codigo+"\n\t\t }";
 		return "";
     }
 
@@ -70,10 +76,14 @@ public class CodeGenerator{
     }		  
 
     private String codeFor(AST.DeclaracionSimple ds){
+    	//if(a.contains(ds.id.id) == false){
+    	//	a.add(ds.id.id);
     	if(ds.tipo.equals("entero")) return "\t\t int "+ds.id.id+";";
     	else if(ds.tipo.equals("cadena")) return "\t\t String "+ds.id.id+";";
     	else if(ds.tipo.equals("logico")) return "\t\t boolean "+ds.id.id+";";
-		return "";    			
+    	//}else 
+		//return "\t\t int "+ds.id.id+";";
+    	return "";
     }
 
     private String codeFor(AST.DeclaracionCompuesta dc){
@@ -135,11 +145,11 @@ public class CodeGenerator{
 		return "\t\t "+a.id.id+ "="+d+";";
     }				
 
-    private String codeFor(AST.OperacionEntrada oe){
-	return "\t\t Scanner "+oe.id.id+" = new() Scanner(System.in);";
+	private String codeFor(AST.OperacionEntrada oe){
+		return "\t\t "+oe.id.id+" = sc.nextInt();";
     }
     
     private String codeFor(AST.OperacionSalida os){
-	return "\t\t System.out.println("+codeFor(os.exp)+");";
+		return "\t\t System.out.println("+codeFor(os.exp)+");";
     }    
 }

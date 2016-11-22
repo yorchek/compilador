@@ -50,7 +50,7 @@ public class CodeGenerator{
     private String codeFor(AST.Iteracion i){
     	String codigo = this.codeFor(i.bloque);
     	String cnd = "";    	
-		if(i instanceof AST.Iteracion) return "\t\t for("+i.id+";"+i.el+";"+i.cond+ "){"+codigo+"\n}";
+		if(i instanceof AST.Iteracion) return "\t\t for("+i.id+";"+i.el+";"+i.cond+ "){"+codigo+"\n\t\t }";
 		return "";
     }
 
@@ -59,7 +59,7 @@ public class CodeGenerator{
     	String cnd = "";    	    
     	if(r.cond instanceof AST.Expresion)
     		cnd += codeFor((AST.Expresion)r.cond);
-		if(r instanceof AST.Repeticion) return "\t\t while("+cnd+"){"+codigo+"\n\t\t }";
+		if(r instanceof AST.Repeticion) return "\t\t while("+cnd+"){"+codigo+" \n\t\t }";
 		return "";
     }
     
@@ -79,11 +79,11 @@ public class CodeGenerator{
     private String codeFor(AST.DeclaracionCompuesta dc){
     	String d= "";
     	if(dc.exp instanceof AST.Expresion)
-    		d+=((AST.Expresion)dc.exp);
+    		d += codeFor((AST.Expresion)dc.exp);
 		if(dc.tipo.equals("entero")) return "\t\t int "+dc.id.id+"="+d+";";
 		else if(dc.tipo.equals("cadena")) return "\t\t String "+dc.id.id+"="+d+";";
 		else if(dc.tipo.equals("logico")) return "\t\t boolean "+dc.id.id+"="+d+";";
-		return "";    			
+		else return "\t\t "+dc.id.id+"="+d+";";		
     }
 
     private String codeFor(AST.Expresion e){
@@ -110,7 +110,7 @@ public class CodeGenerator{
 		return "!"+eu.exp+";";
     }
 
-    private String codeFor(AST.ExpresionReferencia er){	
+    private String codeFor(AST.ExpresionReferencia er){	    	
 		return ""+er.id;
     }
 
@@ -131,8 +131,8 @@ public class CodeGenerator{
     private String codeFor(AST.Asignacion a){
     	String d= "";
     	if(a.exp instanceof AST.Expresion)
-    		d+=((AST.Expresion)a.exp);
-		return ""+a.id.id+ "="+d+";";
+    		d+=codeFor((AST.Expresion)a.exp);
+		return "\t\t "+a.id.id+ "="+d+";";
     }				
 
     private String codeFor(AST.OperacionEntrada oe){

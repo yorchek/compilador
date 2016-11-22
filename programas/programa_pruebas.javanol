@@ -1,7 +1,7 @@
 programa{
 	entero N;
 	lee N;
-
+	entero j = 1;
 	mientras N<0 o N==0 {
 		escribe "Ingresa un número mayor o igual a 1:";
 		lee N;	

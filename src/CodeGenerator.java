@@ -7,117 +7,118 @@ import java.util.Hashtable;
 
 public class CodeGenerator{
 
-	String datos;
-	MIPSResistries registros;
-	private static String registro_actual;
-	private boolean includeConcat;
-	private int numLit =0;
-	private String includes;
+    String nombreClase;
+    SymbolTable table;
 	
-	public CodeGenerator(String includes){
-		this.datos="";
-		includeConcat = false;
-		this.includes = includes;
-		registros = new MIPSResistries();
-	}
+    public CodeGenerator(String nombreClase, SymbolTable table){
+		this.nombreClase = nombreClase;
+		this.table = table;
+    }
 
-	    
-		public String codeFor(AST.Programa p){
-			String codigo = this.codeFor(p.bloqueDeSentencias);
-			if(includeConcat){
-				try{
-				byte[] encoded = Files.readAllBytes(Paths.get(includes));
-				  String func = new String(encoded, "UTF-8");
-				  codigo+="\n"+func;
-				}catch(IOException ioe){
-					System.out.println("ERROR: No fue posible incluir funciones auxiliares ["+includes+"]");
-					ioe.printStackTrace(System.out);
-					return "";
-				}
-			}
-			
-			return ".data\n "+this.datos+"\n\n .text\n\n programa:"+codigo+"\n\t j fin_programa \n\n fin_programa:";
-		}
+    public String codeFor(AST.Programa p){
+		String codigo = this.codeFor(p.bloqueDeSentencias);
+		String imp = "import java.util.Scanner;\n";
+		return imp+"public class "+nombreClase+"{\n\t public static void main(String[] args){"+codigo+"\n\t}\n}";
+    }
 		
-		private String codeFor(AST.BloqueDeSentencias b){
-			String code = "";
-			for(AST.Sentencia sentencia:b.sentencias){
-				code+="\n"+this.codeFor(sentencia);
-			}
-			return code;
+    private String codeFor(AST.BloqueDeSentencias b){
+		String code = "";		
+		for(AST.Sentencia sentencia:b.sentencias){
+	    	code+="\n"+this.codeFor(sentencia);
 		}
+		return code;
+    }
 		
-		private String codeFor(AST.Sentencia s){
-			if (s instanceof AST.Operacion) return this.codeFor((AST.Operacion)s);
-			return "";
-		}
+    private String codeFor(AST.Sentencia s){
+		if (s instanceof AST.Operacion) return this.codeFor((AST.Operacion)s);
+		else if (s instanceof AST.Declaracion) return this.codeFor((AST.Declaracion)s);
+		else if (s instanceof AST.Repeticion) return this.codeFor((AST.Repeticion)s);
+		else if (s instanceof AST.Decision)  return this.codeFor((AST.Decision)s);
+		else if (s instanceof AST.Iteracion) return this.codeFor((AST.Iteracion)s);
+		return "";
+    }
 
-		private String codeFor(AST.ExpresionLiteral el){
-			registro_actual = registros.getFreeRegister();
-			String valor = "";
-			String tipo = "";
-			if(el.literal instanceof String){ valor ="\""+el.literal+"\""; tipo="asciiz";}
-			numLit++;
-			this.datos+="\n lit"+numLit+": ."+tipo+" "+valor;
-			return "\n\t la "+registro_actual+", "+"lit"+numLit;
-		}
+    private String codeFor(AST.Decision d){
+    	String codigo = this.codeFor(d.bloque);
+		if(d instanceof AST.Decision) return "\t\t if("+d.cond+"){\n\t\t\t "+codigo+"\n\t\t }";
+		return "";
+    }
 
-		
-		private String codeFor(AST.Operacion o){
-			if (o instanceof AST.OperacionSalida) return this.codeFor((AST.OperacionSalida)o);
-			return "";
-			
-		}
-		
-		
-		private String codeFor(AST.Expresion e){
-			if (e instanceof AST.ExpresionLiteral) return this.codeFor((AST.ExpresionLiteral)e);
-			return "";
-			
-		}
-		
-		private String codeFor(AST.OperacionSalida os){
-			String code = this.codeFor(os.exp);
-			//Codigo para convertir a cadena
-			code+="\n\t li $v0, 4";
-			code+="\n\t move $a0, "+registro_actual;
-			code+="\n\t syscall";
-			return code;
-		}
+    private String codeFor(AST.Iteracion i){
+    	String codigo = this.codeFor(i.bloque);
+		if(i instanceof AST.Iteracion) return "\t\t for("+i.id+";"+i.el+";"+i.cond+ "){"+codigo+"\n}";
+		return "";
+    }
 
+    private String codeFor(AST.Repeticion r){
+    	String codigo = this.codeFor(r.bloque);
+		if(r instanceof AST.Repeticion) return "\t\t while("+r.cond+"){\n \t\t\t"+codigo+"\n\t\t }";
+		return "";
+    }
+    
+    private String codeFor(AST.Declaracion d){
+    	if(d instanceof AST.DeclaracionSimple) return this.codeFor((AST.DeclaracionSimple)d);
+		else if (d instanceof AST.DeclaracionCompuesta) return this.codeFor((AST.DeclaracionCompuesta)d);
+    	return "";
+    }		  
 
- private  class MIPSResistries{
-	 private  Hashtable<String, Boolean> mips_registries;
-	 
-	 public  MIPSResistries(){
-		 mips_registries = new Hashtable<String,Boolean>();
-		 mips_registries.put("$t6",true);
-		 mips_registries.put("$t5",true);
-		 mips_registries.put("$t4",true);
-		 mips_registries.put("$t3",true);
-		 mips_registries.put("$t2",true);
-		 mips_registries.put("$t1",true);
-		 mips_registries.put("$t0",true);
-	 }
-	 
-	 public  String getFreeRegister(){
-		 Enumeration<String> enumKey = mips_registries.keys();
-		 while(enumKey.hasMoreElements()) {
-		     String key = enumKey.nextElement();
-		     Boolean val = mips_registries.get(key);
-		     mips_registries.put(key, false);
-		     if(val.equals(true)){
-		     return key;
-		     }
-		 }
-		 return null;
-	 }
-	 
-	 public  void freeRegister(String reg){
-		     mips_registries.put(reg, false);
-	 }
-	 
-	 
- }
+    private String codeFor(AST.DeclaracionSimple ds){
+    	if(ds.tipo.equals("entero")) return "\t\t int "+ds.id.id+";";
+    	else if(ds.tipo.equals("cadena")) return "\t\t String "+ds.id.id+";";
+    	else if(ds.tipo.equals("logico")) return "\t\t boolean "+ds.id.id+";";
+		return "";    			
+    }
 
+    private String codeFor(AST.DeclaracionCompuesta dc){
+		if(dc.tipo.equals("entero")) return "\t\t int "+dc.id.id+"="+dc.exp+";";
+		else if(dc.tipo.equals("cadena")) return "\t\t String "+dc.id.id+"="+dc.exp+";";
+		else if(dc.tipo.equals("logico")) return "\t\t boolean "+dc.id.id+"="+dc.exp+";";
+		return "";    			
+    }
+
+    private String codeFor(AST.Expresion e){
+		if (e instanceof AST.ExpresionLiteral) return this.codeFor((AST.ExpresionLiteral)e);
+		else if (e instanceof AST.ExpresionReferencia) return this.codeFor((AST.ExpresionReferencia)e);
+		else if (e instanceof AST.ExpresionBinaria) return this.codeFor((AST.ExpresionBinaria)e); 
+		else if (e instanceof AST.ExpresionUnaria) return this.codeFor((AST.ExpresionUnaria)e); 
+		return "";
+    }
+
+    private String codeFor(AST.ExpresionBinaria eb){	
+		return ""+eb.expi+""+eb.op+""+eb.expd;
+    }
+
+    private String codeFor(AST.ExpresionUnaria eu){	
+		return "!"+eu.exp+";";
+    }
+
+    private String codeFor(AST.ExpresionReferencia er){	
+		return ""+er.id;
+    }
+
+    private String codeFor(AST.ExpresionLiteral el){       	
+		if(el.literal instanceof String) return "\""+el.literal+"\"";
+    	else if(el.literal instanceof Integer) return ""+el.literal;
+		else if(el.literal instanceof Boolean) return ""+el.literal;
+		return "";
+    }
+		
+    private String codeFor(AST.Operacion o){
+		if (o instanceof AST.OperacionSalida) return this.codeFor((AST.OperacionSalida)o);
+		else if (o instanceof AST.OperacionEntrada) return this.codeFor((AST.OperacionEntrada)o);
+		else if (o instanceof AST.Asignacion) return this.codeFor((AST.Asignacion)o);
+		return "";		
+    }
+
+    private String codeFor(AST.Asignacion a){
+		return ""+a.id.id+ "="+a.exp+";";
+    }				
+
+    private String codeFor(AST.OperacionEntrada oe){
+	return "\t\t Scanner "+oe.id.id+" = new() Scanner(System.in);";
+    }
+    
+    private String codeFor(AST.OperacionSalida os){
+	return "\t\t System.out.println("+codeFor(os.exp)+");";
+    }    
 }

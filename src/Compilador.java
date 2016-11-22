@@ -13,6 +13,8 @@ import java_cup.runtime.Symbol;
 public class Compilador{
 
 	static HashMap mapa_symbolos = new HashMap();// Elementos léxicos del lenguaje javanol
+	
+	static SymbolTable tabla_simbolos = null; 
 
 	private static void init(){
 		Field [] fields =  sym.class.getDeclaredFields();
@@ -39,8 +41,6 @@ public class Compilador{
 				etapa = 2;
 		else if(fase.equals( "gcodigo"))
 				etapa = 3;
-		else if(fase.equals( "execasm"))
-				etapa = 4;
 		else{
 				System.out.println("Opción de compilación inválida");
 				System.exit(1);
@@ -108,7 +108,7 @@ public class Compilador{
 				try{
 			System.out.println("* INICIANDO ANALISIS SEMANTICO:");
 			SymbolTableBuilder stb =new SymbolTableBuilder();
-			SymbolTable tabla_simbolos = stb.build(programa);
+			tabla_simbolos = stb.build(programa);
 			if(stb.getNumErr()!=0){
 				ERROR = 1;
 			}
@@ -134,10 +134,10 @@ public class Compilador{
 				}
 				try{
 			System.out.println("* GENERANDO CODIGO");
-			CodeGenerator codeg = new CodeGenerator(args[0]+"/ensamblador/lib/funciones");
+			CodeGenerator codeg = new CodeGenerator(fuente.replace(".javanol",""), tabla_simbolos);
 			String codigo = codeg.codeFor(programa); 
-					String objeto = fuente.replace(".javanol",".asm");
-					PrintWriter file = new PrintWriter(args[0]+"/ensamblador/"+objeto);
+					String objeto = fuente.replace(".javanol",".java");
+					PrintWriter file = new PrintWriter(args[0]+"/"+objeto);
 					file.print(codigo);
 					file.close();
 					
@@ -150,12 +150,7 @@ public class Compilador{
 				System.out.println("\n\n* COMPILACION FINALIZADA (estado "+ERROR+")");
 				
 			}
-		} else{ // Ejecución del programa ensamblador
-		System.out.println("* EJECUTANDO "+args[1]);
-		String[] argumentos = {args[0]+"/ensamblador/"+args[1]};
-		Mars.main(argumentos);
-		return;
-	}
+		}
 
 	}
 }

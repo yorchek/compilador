@@ -107,7 +107,7 @@ class AST{
 			//System.out.println("genera DeclaracionCompuesta");
 			this.tipo = tipo;
 			this.id = id;
-			this.exp = exp;;
+			this.exp = exp;
 			this.linea = linea;
 		}
 	}

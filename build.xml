@@ -45,7 +45,7 @@
       	<input
       						    message="Ingrese la etapa hasta la cual se compilará el programa fuente:"
       						    addproperty="fase"
-      						    defaultvalue="asemantico"
+      						    defaultvalue="alexico"
       						  />
       </target>
 	
@@ -66,26 +66,29 @@
 	
 
 	
-	<target name="javanol" description="Ejecuta el código ensamblador " >
+	<target name="javanol" description="Ejecuta el código java " >
 				        <!-- Compile the java code from ${src} into ${build} -->
 		<input message="Ingrese el nombre del programa a compilar:"
 			   addproperty="programa"
-			    defaultvalue="programa_pruebas.asm"
+			    defaultvalue="programa_pruebas"
         />
-		<javac      srcdir="${src}"
+		<mkdir dir="${build.dir}"/>
+		
+		<javac      srcdir="programas"
 		                    destdir="${build.dir}"
-		                    debug="false" classpathref="classpath" nowarn="true">
+		                    debug="false" classpathref="classpath" nowarn="true" includeantruntime="false">
 			<compilerarg value="-XDignore.symbol.file"/>
 			</javac>
+		
 			
-			<java dir="${build.dir}" classname="Compilador" fork="yes">
+			<java dir="${build.dir}" classname="${programa}" fork="yes">
 										<classpath>
 											<path refid="classpath"/>
 											<path location="${build.dir}"/>
 										</classpath>
 						<arg value="${programas.dir}"/>
 											<arg value="${programa}"/>
-										<arg value="execasm"/>
+										<arg value="exec"/>
 									  </java>
 		</target>
 	

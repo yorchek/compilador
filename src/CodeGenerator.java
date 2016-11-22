@@ -19,7 +19,7 @@ public class CodeGenerator{
     public String codeFor(AST.Programa p){
 		String codigo = this.codeFor(p.bloqueDeSentencias);
 		String imp = "import java.util.Scanner;\n";
-		return imp+"public class "+nombreClase+"{\n\tpublic static void main(String[] args){\n \t\t Scanner sc = new Scanner(System.in)"+codigo+"\n\t}\n}";
+		return imp+"public class "+nombreClase+"{\n\tpublic static void main(String[] args){\n \t\t Scanner sc = new Scanner(System.in);"+codigo+"\n\t}\n}";
     }
 		
     private String codeFor(AST.BloqueDeSentencias b){
@@ -56,7 +56,7 @@ public class CodeGenerator{
     		r += codeFor((AST.Expresion)i.el);
     	if(i.cond instanceof AST.Expresion)
     		cnd += codeFor((AST.Expresion)i.cond);
-		if(i instanceof AST.Iteracion) return "\t\t for("+i.id.id+"="+cnd+";"+i.id.id+"=="+cnd+";"+i.id.id+"++){"+codigo+"\n\t\t }";
+		if(i instanceof AST.Iteracion) return "\t\t for("+i.id.id+"="+r+";"+i.id.id+"<="+cnd+";"+i.id.id+"++){"+codigo+"\n\t\t }";
 		return "";
     }
 

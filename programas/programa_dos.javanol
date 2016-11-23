@@ -1,0 +1,10 @@
+programa{
+	entero i;
+	escribe "Ingresa un numero mayor que cero: ";
+	lee i;
+	entero j=0;
+	mientras j<i{
+		escribe "Numero: "+j;
+		j =j+1;
+	}
+}

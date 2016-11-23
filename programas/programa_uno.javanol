@@ -1,0 +1,14 @@
+programa{
+	entero i;
+	entero j;	
+	escribe "El primer numero:";
+	lee i;	
+	escribe "El segundo numero:";
+	lee j;
+	si j>i entonces{
+		escribe "Es mayor el entero: "+ j;
+	}
+	si j<i entonces{
+		escribe "Es mayor el entero: "+ i;
+	}
+}

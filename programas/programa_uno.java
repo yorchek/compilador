@@ -10,9 +10,12 @@ public class programa_uno{
 		 j = sc.nextInt();
 		 if(j>i){
 		 System.out.println("Es mayor el entero: "+j);
-		 }
+		 }else{ 
 		 if(j<i){
 		 System.out.println("Es mayor el entero: "+i);
+		 }else{ 
+		 System.out.println("Son iguales");
+		 }
 		 }
 	}
 }

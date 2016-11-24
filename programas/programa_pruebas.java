@@ -7,5 +7,10 @@ public class programa_pruebas{
 		 int resultado;
 		 resultado=var1+var2;
 		 System.out.println("La suma es: "+resultado);
+		 if(resultado>0){
+		 System.out.println("Hola");
+		 }else{ 
+		 System.out.println("Adios");
+		 }
 	}
 }

@@ -39,12 +39,16 @@ public class CodeGenerator{
 		return "";
     }
 
-    private String codeFor(AST.Decision d){
+    private String codeFor(AST.Decision d){    	
     	String codigo = this.codeFor(d.bloque);
-    	String cnd="";
+    	String cnd="";    	
     	if(d.cond instanceof AST.Expresion)
     		cnd += codeFor((AST.Expresion)d.cond);    	
-		if(d instanceof AST.Decision) return "\t\t if("+cnd+"){"+codigo+"\n\t\t }";
+    	String completo= "\t\t if("+cnd+"){"+codigo+"\n\t\t }";
+    	if(d.sn){
+    		completo += "else{ "+this.codeFor(d.bloquesn)+"\n\t\t }";
+    	}    	
+		if(d instanceof AST.Decision) return completo;
 		return "";
     }
 

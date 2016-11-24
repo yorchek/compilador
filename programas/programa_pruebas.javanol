@@ -4,4 +4,9 @@ programa{
 	entero resultado;
 	resultado = var1 + var2;
 	escribe "La suma es: "+resultado;
+	si resultado > 0 entonces{
+		escribe "Hola";
+	}si no{
+		escribe "Adios";
+	}
 }

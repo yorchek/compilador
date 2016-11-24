@@ -7,8 +7,12 @@ programa{
 	lee j;
 	si j>i entonces{
 		escribe "Es mayor el entero: "+ j;
+	} si no {
+		si j<i entonces{
+			escribe "Es mayor el entero: "+ i;
+		}si no{
+			escribe "Son iguales";
+		}	
 	}
-	si j<i entonces{
-		escribe "Es mayor el entero: "+ i;
-	}
+	
 }
